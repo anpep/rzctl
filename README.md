@@ -17,13 +17,25 @@ Feel free to add your own via PR!
 ## Quick start
 ```sh
 # Clone this repository
-git clone https://github.com/my-nick-is-taken/rzctl
+git clone https://github.com/anpep/rzctl
 # Build rzctl
 cd rzctl && make
 # Try it out!
 rzctl list-devices
 # Try rzctl --help for all supported commands
 ```
+
+## I keep getting `Permission denied` error
+`libusb` does not have permission to access the USB device. Create a udev rule for your device and place it on `/etc/udev/rules.d/`:
+```
+# example for Deathadder Chroma
+SUBSYSTEM=="usb",h
+ATTR{idVendor}=="1532",
+ATTR{idProduct}=="0043",
+MODE="0666"
+```
+
+Save the file and execute `udevadm control -R` as superuser. Note that you may also need to reconnect your device in order to udev to apply the new permissions.
 
 ## Open-source code
 This software depends on [argtable/argtable3](https://github.com/argtable/argtable3/) because I wanted to try out something new for parsing command line arguments. I'm very happy with the outcome.

@@ -32,7 +32,7 @@ int list_devices(int verbose)
         return 1;
     }
     if (verbose)
-        libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_DEBUG);
+        libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_DEBUG);
 
     ndevs = razer_get_devices(&devs);
     if (ndevs < 0) {
@@ -41,7 +41,13 @@ int list_devices(int verbose)
     }
 
     for (i = 0; i < ndevs; i++) {
-        razer_init(&devs[i]);
+        if (razer_init(&devs[i]) < 0) {
+            fprintf(stderr,
+                    PR_ERROR "could not initialize Razer device %04x:%04x: ",
+                    devs[i].desc.idVendor, devs[i].desc.idProduct);
+            perror(NULL);
+            continue;
+        }
         printf("%04x:%04x %s (%s)\n", devs[i].desc.idVendor, devs[i].desc.idProduct,
                 devs[i].s_product, devs[i].s_manufacturer);
         razer_deinit(&devs[i]);

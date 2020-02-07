@@ -145,8 +145,5 @@ int main(int argc, char *argv[])
         exit_code = 1;
     }
 
-    for (i = 0; i < sizeof(argtables) / sizeof(argtables[0]); i++)
-        arg_freetable(argtables[i],
-                      sizeof(argtables[i]) / sizeof(argtables[i][0]));
     return exit_code;
 }

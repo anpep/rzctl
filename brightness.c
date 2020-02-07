@@ -31,7 +31,7 @@ int razer_get_brightness(struct razer_device *dev)
     };
 
     /* get logo brightness */
-    retval = razer_send_report(dev, 0x03, 0x83, args, sizeof(args));
+    retval = razer_send_report(dev, 0x03, 0x83, args, sizeof(args), NULL, 0);
     if (retval < 0)
         return retval;
     printf("brightness value: %02x\n", args[2]);
@@ -51,9 +51,9 @@ int razer_set_brightness(struct razer_device *dev, uint8_t brightness, int fade)
         args[0] = 1;
         args[2] = brightness;
         args[1] = LED_SCROLL;
-        razer_send_report(dev, 0x03, 0x03, args, sizeof(args));
+        razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
         args[1] = LED_LOGO;
-        razer_send_report(dev, 0x03, 0x03, args, sizeof(args));
+        razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
         return 0;
     }
 
@@ -72,9 +72,9 @@ int razer_set_brightness(struct razer_device *dev, uint8_t brightness, int fade)
         if (v == brightness)
             args[0] = 1;
         args[1] = LED_SCROLL;
-        razer_send_report(dev, 0x03, 0x03, args, sizeof(args));
+        razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
         args[1] = LED_LOGO;
-        razer_send_report(dev, 0x03, 0x03, args, sizeof(args));
+        razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
     }
     return 0;
 }
@@ -94,7 +94,7 @@ int set_brightness(int verbose, int brightness, int fade)
         return 1;
     }
     if (verbose)
-        libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_DEBUG);
+        libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_DEBUG);
 
     ndevs = razer_get_devices(&devs);
     if (ndevs < 0) {

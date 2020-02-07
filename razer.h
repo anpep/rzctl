@@ -73,5 +73,7 @@ int razer_free_devices(struct razer_device **rzdevs);
 int razer_send_report(struct razer_device *dev,
                       uint8_t cmd_class,
                       uint8_t cmd_id,
-                      uint8_t *args,
-                      uint8_t args_len);
+                      uint8_t *in_args,
+                      uint8_t in_args_len,
+                      uint8_t *out_args,
+                      uint8_t out_args_len);

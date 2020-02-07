@@ -15,10 +15,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define _DEFAULT_SOURCE /* required for usleep */
+
 #include <stdlib.h>
 #include <string.h>
 #include <libusb-1.0/libusb.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include "razer.h"
 
@@ -133,8 +136,10 @@ int razer_free_devices(struct razer_device **rzdevs)
 int razer_send_report(struct razer_device *dev,
                       uint8_t cmd_class,
                       uint8_t cmd_id,
-                      uint8_t *args,
-                      uint8_t args_len)
+                      uint8_t *in_args,
+                      uint8_t in_args_len,
+                      uint8_t *out_args,
+                      uint8_t out_args_len)
 {
     int retval;
     uint8_t transaction_id;
@@ -144,8 +149,8 @@ int razer_send_report(struct razer_device *dev,
     report.transaction_id = transaction_id;
     report.cmd_class = cmd_class;
     report.cmd_id = cmd_id;
-    report.args_len = args_len;
-    memcpy(report.args, args, args_len);
+    report.args_len = in_args_len;
+    memcpy(report.args, in_args, in_args_len);
     report.crc = report_crc(&report);
 
     /* send feature report */
@@ -162,6 +167,11 @@ int razer_send_report(struct razer_device *dev,
                 REPORT_TIMEOUT);
     } while (retval < 0);
 
+    /* HACK: actually wait for the device firmware to be ready */
+    usleep(REPORT_TIMEOUT);
+    if (!out_args || !out_args_len)
+        return retval;
+
     /* obtain response report from device */
     do {
         retval = libusb_control_transfer(
@@ -175,9 +185,12 @@ int razer_send_report(struct razer_device *dev,
                 sizeof(struct razer_report),
                 REPORT_TIMEOUT);
     } while (retval < 0);
-    memcpy(args, report.args, args_len);
+
+    /* copy response arguments, without overflowing the supplied buffer */
+    retval = report.args_len > out_args_len ? out_args_len : report.args_len;
+    memcpy(out_args, report.args, retval);
 
     /* TODO: handle out-of-order input reports and correlate using transaction_id */
     assert(report.transaction_id == transaction_id);
-    return 0;
+    return retval;
 }

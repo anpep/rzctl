@@ -32,10 +32,10 @@ int razer_set_effect(struct razer_device *dev, int effect)
 
     /* set logo effect */
     args[1] = LED_SCROLL;
-    razer_send_report(dev, 0x03, 0x02, args, sizeof(args));
+    razer_send_report(dev, 0x03, 0x02, args, sizeof(args), NULL, 0);
     /* set scroll wheel effect */
     args[1] = LED_LOGO;
-    razer_send_report(dev, 0x03, 0x02, args, sizeof(args));
+    razer_send_report(dev, 0x03, 0x02, args, sizeof(args), NULL, 0);
     return 0;
 }
 
@@ -61,7 +61,7 @@ int set_effect(int verbose, const char *s_effect)
         return 1;
     }
     if (verbose)
-        libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_DEBUG);
+        libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_DEBUG);
 
     ndevs = razer_get_devices(&devs);
     if (ndevs < 0) {

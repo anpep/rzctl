@@ -34,10 +34,10 @@ int razer_set_color(struct razer_device *dev, uint32_t rgb)
 
     /* set logo color */
     args[1] = LED_SCROLL;
-    razer_send_report(dev, 0x03, 0x01, args, sizeof(args));
+    razer_send_report(dev, 0x03, 0x01, args, sizeof(args), NULL, 0);
     /* set scroll wheel color */
     args[1] = LED_LOGO;
-    razer_send_report(dev, 0x03, 0x01, args, sizeof(args));
+    razer_send_report(dev, 0x03, 0x01, args, sizeof(args), NULL, 0);
     return 0;
 }
 int set_color(int verbose, const char *s_color)
@@ -58,7 +58,7 @@ int set_color(int verbose, const char *s_color)
         return 1;
     }
     if (verbose)
-        libusb_set_debug(NULL, LIBUSB_LOG_LEVEL_DEBUG);
+        libusb_set_option(NULL, LIBUSB_OPTION_LOG_LEVEL, LIBUSB_LOG_LEVEL_DEBUG);
 
     ndevs = razer_get_devices(&devs);
     if (ndevs < 0) {

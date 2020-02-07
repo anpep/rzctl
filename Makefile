@@ -1,4 +1,4 @@
-CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -Werror
+CFLAGS = -std=c99 -Wall -Wextra -Wpedantic
 LDFLAGS = -lm -lusb-1.0
 
 DEPS = 3rdparty/argtable3.h razer.h list_devices.h brightness.h effect.h color.h
