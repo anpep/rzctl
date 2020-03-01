@@ -20,4 +20,5 @@
 #include <string.h>
 #include "razer.h"
 
+/* list-devices CLI command */
 int list_devices(int verbose);

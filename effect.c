@@ -25,9 +25,9 @@
 int razer_set_effect(struct razer_device *dev, int effect)
 {
     uint8_t args[3] = {
-            1, /* persist value? */
-            0, /* LED ID */
-            effect
+        1, /* persist value? */
+        0, /* LED ID */
+        effect
     };
 
     /* set logo effect */

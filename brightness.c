@@ -25,31 +25,29 @@ int razer_get_brightness(struct razer_device *dev)
 {
     int retval;
     uint8_t args[3] = {
-            1, /* persist value? */
-            LED_LOGO, /* LED ID */
-            0 /* brightness */
+        1, /* persist value? */
+        LED_LOGO, /* LED ID */
+        0 /* brightness */
     };
 
     /* get logo brightness */
-    retval = razer_send_report(dev, 0x03, 0x83, args, sizeof(args), NULL, 0);
+    retval = razer_send_report(dev, 0x03, 0x83, args, sizeof(args), args, sizeof(args));
     if (retval < 0)
         return retval;
-    printf("brightness value: %02x\n", args[2]);
+    printf("%d\n", args[2]);
     return args[2];
 }
 
 int razer_set_brightness(struct razer_device *dev, uint8_t brightness, int fade)
 {
-    uint8_t initial, v;
+    uint8_t v, delta;
     uint8_t args[3] = {
-            1, /* persist value? */
-            0, /* LED ID */
-            0  /* brightness value */
+        !fade,      /* persist value? only if not fading */
+        0,          /* LED ID */
+        brightness, /* brightness value */
     };
 
     if (!fade) {
-        args[0] = 1;
-        args[2] = brightness;
         args[1] = LED_SCROLL;
         razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
         args[1] = LED_LOGO;
@@ -58,19 +56,17 @@ int razer_set_brightness(struct razer_device *dev, uint8_t brightness, int fade)
     }
 
     /* get initial brightness */
-    /* TODO: understand why this doesn't work most of the time */
-    initial = razer_get_brightness(dev);
+    v = razer_get_brightness(dev);
     /* fade the brightness up or down */
-    /* TODO: find out if the firmware can really handle this or we've got a bug
-     * somewhere in the razer_send_report() function (most probably) */
-    for (v = initial;
-         v != brightness;
-         v += initial < brightness ? 1 : -1) {
-        args[2] = v;
+    delta = v < brightness ? +1 : -1;
+
+    while (v != brightness) {
+        v += delta;
         /* only persist intended brightness in order to avoid unneeded flash
          * writes on the device */
         if (v == brightness)
             args[0] = 1;
+        args[2] = v;
         args[1] = LED_SCROLL;
         razer_send_report(dev, 0x03, 0x03, args, sizeof(args), NULL, 0);
         args[1] = LED_LOGO;

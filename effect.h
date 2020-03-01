@@ -25,5 +25,8 @@ enum {
     EFFECT_SPECTRUM = 0x04
 };
 
+/* sets a lightning effect on the device */
 int razer_set_effect(struct razer_device *dev, int effect);
+
+/* set-effect CLI command */
 int set_effect(int verbose, const char *s_effect);

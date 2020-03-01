@@ -34,6 +34,7 @@ static const uint16_t k_supported_pids[] = { /* please keep this array sorted */
 static int __attribute__((noinline))
 search_cmpfn(const void *a, const void *b)
 {
+    /* comparison succeeds if a == b */
     return *(uint16_t *) a - *(uint16_t *) b;
 }
 

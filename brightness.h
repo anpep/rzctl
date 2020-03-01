@@ -20,5 +20,11 @@
 #include <stdint.h>
 #include "razer.h"
 
+/* obtains the current brightness value of the device */
+int razer_get_brightness(struct razer_device *dev);
+
+/* sets the brightness value for the device (0-100) */
 int razer_set_brightness(struct razer_device *dev, uint8_t brightness);
+
+/* set-brightness CLI command */
 int set_brightness(int verbose, int brightness, int fade);
