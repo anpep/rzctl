@@ -29,7 +29,7 @@ rzctl list-devices
 `libusb` does not have permission to access the USB device. Create a udev rule for your device and place it on `/etc/udev/rules.d/`:
 ```
 # example for Deathadder Chroma
-SUBSYSTEM=="usb",h
+SUBSYSTEM=="usb",
 ATTR{idVendor}=="1532",
 ATTR{idProduct}=="0043",
 MODE="0666"
